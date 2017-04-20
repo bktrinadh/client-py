@@ -205,6 +205,8 @@ class FHIRServer(object):
             'Accept': FHIRJSONMimeType,
             'Accept-Charset': 'UTF-8',
         }
+        if resource_json.get('id', None) is not None:
+            headers['If-Match'] = 'W/"{}"'.format(resource_json.get('meta').get('versionId'))
         if not nosign and self.auth is not None and self.auth.can_sign_headers():
             headers = self.auth.signed_headers(headers)
         
