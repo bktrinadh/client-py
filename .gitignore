@@ -1,6 +1,7 @@
 *.pyc
 __pycache__
 session_data
+.idea
 
 # docs
 /docs
