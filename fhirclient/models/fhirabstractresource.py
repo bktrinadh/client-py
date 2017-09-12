@@ -122,6 +122,16 @@ class FHIRAbstractResource(fhirabstractbase.FHIRAbstractBase):
         ret = srv.post_json(self.relativePath(), self.as_json())
         if len(ret.text) > 0:
             return ret.json()
+        else:
+            rem_id = self.get_resource_id(ret)
+            if rem_id:
+                return self.__class__.read(rem_id, srv)
+        return None
+
+    def get_resource_id(self, response):
+        location = response.headers.get('Location', None)
+        if location:
+            return location.split('/').pop()
         return None
     
     def update(self, server=None):
@@ -141,7 +151,7 @@ class FHIRAbstractResource(fhirabstractbase.FHIRAbstractBase):
         ret = srv.put_json(self.relativePath(), self.as_json())
         if len(ret.text) > 0:
             return ret.json()
-        return None
+        return self.__class__.read(self.id, srv)
     
     def delete(self):
         """ Delete the receiver from the given server with a DELETE command.
