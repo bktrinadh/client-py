@@ -119,14 +119,28 @@ class FHIRAbstractResource(fhirabstractbase.FHIRAbstractBase):
         if self.id:
             raise Exception("This resource already has an id, cannot create")
         
-        ret = srv.post_json(self.relativePath(), self.as_json())
+        ret = srv.post_json(self.relativePath(), self.as_json(), prefer_header='return=minimal')
+        return ret.json() if len(ret.text) > 0 else self.get_resource_id(ret)
+
+    def create_and_return(self, server):
+        """ Attempt to create the receiver on the given server, using a POST
+        command.
+
+        :param FHIRServer server: The server to create the receiver on
+        :returns: None or the response JSON on success
+        """
+        srv = server or self.server
+        if srv is None:
+            raise Exception("Cannot create a resource without a server")
+        if self.id:
+            raise Exception("This resource already has an id, cannot create")
+
+        ret = srv.post_json(self.relativePath(), self.as_json(), prefer_header='return=representation')
         if len(ret.text) > 0:
             return ret.json()
         else:
             rem_id = self.get_resource_id(ret)
-            if rem_id:
-                return self.__class__.read(rem_id, srv)
-        return None
+            return self.__class__.read(rem_id, srv) if rem_id else None
 
     def get_resource_id(self, response):
         location = response.headers.get('Location', None)
@@ -149,10 +163,8 @@ class FHIRAbstractResource(fhirabstractbase.FHIRAbstractBase):
             raise Exception("Cannot update a resource that does not have an id")
         
         ret = srv.put_json(self.relativePath(), self.as_json())
-        if len(ret.text) > 0:
-            return ret.json()
-        return self.__class__.read(self.id, srv)
-    
+        return ret.json() if len(ret.text) > 0 else None
+
     def delete(self):
         """ Delete the receiver from the given server with a DELETE command.
         

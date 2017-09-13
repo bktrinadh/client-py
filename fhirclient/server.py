@@ -225,7 +225,7 @@ class FHIRServer(object):
         self.raise_for_status(res)
         return res
     
-    def post_json(self, path, resource_json, nosign=False):
+    def post_json(self, path, resource_json, nosign=False, prefer_header=None):
         """ Performs a POST of the given JSON, which should represent a
         resource, to the given relative path.
         
@@ -241,6 +241,8 @@ class FHIRServer(object):
             'Accept': FHIRJSONMimeType,
             'Accept-Charset': 'UTF-8',
         }
+        if prefer_header:
+            headers['Prefer'] = prefer_header
         if not nosign and self.auth is not None and self.auth.can_sign_headers():
             headers = self.auth.signed_headers(headers)
         
