@@ -25,7 +25,7 @@ class FHIRAbstractResource(fhirabstractbase.FHIRAbstractBase):
         super(FHIRAbstractResource, self).__init__(jsondict=jsondict, strict=strict)
     
     @classmethod
-    def _with_json_dict(cls, jsondict):
+    def _with_json_dict(cls, jsondict, strict=True):
         """ Overridden to use a factory if called when "resourceType" is
         defined in the JSON but does not match the receiver's resource_name.
         """
@@ -35,8 +35,8 @@ class FHIRAbstractResource(fhirabstractbase.FHIRAbstractBase):
         
         res_type = jsondict.get('resourceType')
         if res_type and res_type != cls.resource_name:
-            return fhirelementfactory.FHIRElementFactory.instantiate(res_type, jsondict)
-        return super(FHIRAbstractResource, cls)._with_json_dict(jsondict)
+            return fhirelementfactory.FHIRElementFactory.instantiate(res_type, jsondict, strict=strict)
+        return super(FHIRAbstractResource, cls)._with_json_dict(jsondict, strict=strict)
     
     def as_json(self):
         js = super(FHIRAbstractResource, self).as_json()

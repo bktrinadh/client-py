@@ -51,10 +51,11 @@ class FHIRSearch(object):
         
         return '{}?{}'.format(self.resource_type.resource_name, '&'.join(parts))
     
-    def perform(self, server):
+    def perform(self, server, strict=True):
         """ Construct the search URL and execute it against the given server.
         
         :param server: The server against which to perform the search
+        :param bool strict: If True (the default), invalid variables will raise a TypeError
         :returns: A Bundle resource
         """
         if server is None:
@@ -62,18 +63,19 @@ class FHIRSearch(object):
         
         from . import bundle
         res = server.request_json(self.construct())
-        bundle = bundle.Bundle(res)
+        bundle = bundle.Bundle(res, strict=strict)
         bundle._server = server
         return bundle
     
-    def perform_resources(self, server):
+    def perform_resources(self, server, strict=True):
         """ Performs the search by calling `perform`, then extracts all Bundle
         entries and returns a list of Resource instances.
         
         :param server: The server against which to perform the search
+        :param bool strict: If True (the default), invalid variables will raise a TypeError
         :returns: A list of Resource instances
         """
-        bundle = self.perform(server)
+        bundle = self.perform(server, strict=strict)
         resources = []
         if bundle is not None and bundle.entry is not None:
             for entry in bundle.entry:

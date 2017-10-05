@@ -53,7 +53,8 @@ class FHIRAbstractBase(object):
         :param dict jsondict: A JSON dictionary to use for initialization
         :param bool strict: If True (the default), invalid variables will raise a TypeError
         """
-        
+        self.strict = strict
+
         self._resolved = None
         """ Dictionary of resolved resources. """
         
@@ -74,7 +75,7 @@ class FHIRAbstractBase(object):
     # MARK: Instantiation from JSON
     
     @classmethod
-    def with_json(cls, jsonobj):
+    def with_json(cls, jsonobj, strict=True):
         """ Initialize an element from a JSON dictionary or array.
         
         If the JSON dictionary has a "resourceType" entry and the specified
@@ -84,19 +85,20 @@ class FHIRAbstractBase(object):
         :raises: TypeError on anything but dict or list of dicts
         :raises: FHIRValidationError if instantiation fails
         :param jsonobj: A dict or list of dicts to instantiate from
+        :param bool strict: If True (the default), invalid variables will raise a TypeError
         :returns: An instance or a list of instances created from JSON data
         """
         if isinstance(jsonobj, dict):
-            return cls._with_json_dict(jsonobj)
+            return cls._with_json_dict(jsonobj, strict=strict)
         
         if isinstance(jsonobj, list):
-            return [cls._with_json_dict(jsondict) for jsondict in jsonobj]
+            return [cls._with_json_dict(jsondict, strict=strict) for jsondict in jsonobj]
         
         raise TypeError("`with_json()` on {} only takes dict or list of dict, but you provided {}"
             .format(cls, type(jsonobj)))
     
     @classmethod
-    def _with_json_dict(cls, jsondict):
+    def _with_json_dict(cls, jsondict, strict=True):
         """ Internal method to instantiate from JSON dictionary.
         
         :raises: TypeError on anything but dict
@@ -106,10 +108,10 @@ class FHIRAbstractBase(object):
         if not isinstance(jsondict, dict):
             raise TypeError("Can only use `_with_json_dict()` on {} with a dictionary, got {}"
                 .format(type(self), type(jsondict)))
-        return cls(jsondict)
+        return cls(jsondict, strict=strict)
     
     @classmethod
-    def with_json_and_owner(cls, jsonobj, owner):
+    def with_json_and_owner(cls, jsonobj, owner, strict=True):
         """ Instantiates by forwarding to `with_json()`, then remembers the
         "owner" of the instantiated elements. The "owner" is the resource
         containing the receiver and is used to resolve contained resources.
@@ -118,9 +120,10 @@ class FHIRAbstractBase(object):
         :raises: FHIRValidationError if instantiation fails
         :param dict jsonobj: Decoded JSON dictionary (or list thereof)
         :param FHIRElement owner: The owning parent
+        :param bool strict: If True (the default), invalid variables will raise a TypeError
         :returns: An instance or a list of instances created from JSON data
         """
-        instance = cls.with_json(jsonobj)
+        instance = cls.with_json(jsonobj, strict=strict)
         if isinstance(instance, list):
             for inst in instance:
                 inst._owner = owner
@@ -167,7 +170,7 @@ class FHIRAbstractBase(object):
             value = jsondict[jsname]
             if hasattr(typ, 'with_json_and_owner'):
                 try:
-                    value = typ.with_json_and_owner(value, self)
+                    value = typ.with_json_and_owner(value, self, strict=self.strict)
                 except Exception as e:
                     value = None
                     err = e
@@ -276,7 +279,7 @@ class FHIRAbstractBase(object):
                 errs.append(KeyError("Property \"{}\" on {} is not optional, you must provide a value for it"
                     .format(nonop, self)))
         
-        if len(errs) > 0:
+        if self.strict and len(errs) > 0:
             raise FHIRValidationError(errs)
         return js
     

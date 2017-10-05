@@ -51,7 +51,7 @@ class FHIRDate(object):
         return isodate.date_isoformat(self.date)
     
     @classmethod
-    def with_json(cls, jsonobj):
+    def with_json(cls, jsonobj, strict=True):
         """ Initialize a date from an ISO date string.
         """
         isstr = isinstance(jsonobj, str)
@@ -67,11 +67,11 @@ class FHIRDate(object):
             .format(type(jsonobj)))
     
     @classmethod
-    def with_json_and_owner(cls, jsonobj, owner):
+    def with_json_and_owner(cls, jsonobj, owner, strict=True):
         """ Added for compatibility reasons to FHIRElement; "owner" is
         discarded.
         """
-        return cls.with_json(jsonobj)
+        return cls.with_json(jsonobj, strict=strict)
     
     def as_json(self):
         if self.origval is not None:
