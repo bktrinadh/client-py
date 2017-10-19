@@ -305,13 +305,12 @@ class FHIRServer(object):
             logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
-        request_path, uri = dump._build_request_path(res.request.url, {})
         logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f}'.format(
             res.request.method,
             res.request.url,
             res.headers.get('X-Request-Id'),
             res.headers.get('Status'),
-            float(res.headers.get('Server-Response-Time', '0.0')),
+            float(res.headers.get('X-Runtime', '0.0')),
         ))
     
     # MARK: State Handling
