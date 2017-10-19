@@ -162,8 +162,7 @@ class FHIRServer(object):
         """
         headers = {'Accept': 'application/json'}
         res = self._get(path, headers, nosign)
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
+        self.log_response(res)
         return res.json()
     
     def request_data(self, path, headers={}, nosign=False):
@@ -171,8 +170,7 @@ class FHIRServer(object):
         given relative path.
         """
         res = self._get(path, None, nosign)
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
+        self.log_response(res)
         return res.content
     
     def _get(self, path, headers={}, nosign=False):
@@ -192,8 +190,7 @@ class FHIRServer(object):
         
         # perform the request but intercept 401 responses, raising our own Exception
         res = self.session.get(url, headers=headers)
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
+        self.log_response(res)
         self.raise_for_status(res)
         return res
     
@@ -220,8 +217,7 @@ class FHIRServer(object):
         
         # perform the request but intercept 401 responses, raising our own Exception
         res = self.session.put(url, headers=headers, data=json.dumps(resource_json))
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
+        self.log_response(res)
         self.raise_for_status(res)
         return res
     
@@ -248,8 +244,7 @@ class FHIRServer(object):
         
         # perform the request but intercept 401 responses, raising our own Exception
         res = self.session.post(url, headers=headers, data=json.dumps(resource_json))
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
+        self.log_response(res)
         self.raise_for_status(res)
         return res
     
@@ -266,8 +261,7 @@ class FHIRServer(object):
             'Accept': 'application/json',
         }
         res = self.session.post(url, data=formdata, auth=auth)
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
+        self.log_response(res)
         self.raise_for_status(res)
         return res
     
@@ -289,8 +283,7 @@ class FHIRServer(object):
         
         # perform the request but intercept 401 responses, raising our own Exception
         res = self.session.delete(url)
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
+        self.log_response(res)
         self.raise_for_status(res)
         return res
     
@@ -307,6 +300,19 @@ class FHIRServer(object):
         else:
             response.raise_for_status()
     
+    def log_response(self, res):
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
+        request_path, uri = dump._build_request_path(res.request.url, {})
+        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f}'.format(
+            res.request.method,
+            res.request.url,
+            res.headers.get('X-Request-Id'),
+            res.headers.get('Status'),
+            float(res.headers.get('Server-Response-Time', '0.0')),
+        ))
     
     # MARK: State Handling
     
