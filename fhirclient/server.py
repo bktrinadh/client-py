@@ -5,6 +5,7 @@ import os
 import requests
 import urllib
 import logging
+from datetime import datetime
 from requests_toolbelt.utils import dump
 
 try:                                # Python 2.x
@@ -161,16 +162,36 @@ class FHIRServer(object):
         :returns: Decoded JSON response
         """
         headers = {'Accept': 'application/json'}
+        stime = datetime.now()
         res = self._get(path, headers, nosign)
-        self.log_response(res)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
+        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time: {:.3f}'.format(
+            res.request.method,
+            res.request.url,
+            res.headers.get('X-Request-Id'),
+            res.headers.get('Status'),
+            float(res.headers.get('X-Runtime', float(res.headers.get('Server-Response-Time', '0.0')) / 1000)),
+            (datetime.now() - stime).total_seconds(),
+        ))
         return res.json()
     
     def request_data(self, path, headers={}, nosign=False):
         """ Perform a data request data against the server's base with the
         given relative path.
         """
+        stime = datetime.now()
         res = self._get(path, None, nosign)
-        self.log_response(res)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
+        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time: {:.3f}'.format(
+            res.request.method,
+            res.request.url,
+            res.headers.get('X-Request-Id'),
+            res.headers.get('Status'),
+            float(res.headers.get('X-Runtime', float(res.headers.get('Server-Response-Time', '0.0')) / 1000)),
+            (datetime.now() - stime).total_seconds(),
+        ))
         return res.content
     
     def _get(self, path, headers={}, nosign=False):
@@ -189,8 +210,18 @@ class FHIRServer(object):
             headers = self.auth.signed_headers(headers)
         
         # perform the request but intercept 401 responses, raising our own Exception
+        stime = datetime.now()
         res = self.session.get(url, headers=headers)
-        self.log_response(res)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
+        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time: {:.3f}'.format(
+            res.request.method,
+            res.request.url,
+            res.headers.get('X-Request-Id'),
+            res.headers.get('Status'),
+            float(res.headers.get('X-Runtime', float(res.headers.get('Server-Response-Time', '0.0')) / 1000)),
+            (datetime.now() - stime).total_seconds(),
+        ))
         self.raise_for_status(res)
         return res
     
@@ -216,8 +247,18 @@ class FHIRServer(object):
             headers = self.auth.signed_headers(headers)
         
         # perform the request but intercept 401 responses, raising our own Exception
+        stime = datetime.now()
         res = self.session.put(url, headers=headers, data=json.dumps(resource_json))
-        self.log_response(res)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
+        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time: {:.3f}'.format(
+            res.request.method,
+            res.request.url,
+            res.headers.get('X-Request-Id'),
+            res.headers.get('Status'),
+            float(res.headers.get('X-Runtime', float(res.headers.get('Server-Response-Time', '0.0')) / 1000)),
+            (datetime.now() - stime).total_seconds(),
+        ))
         self.raise_for_status(res)
         return res
     
@@ -243,8 +284,18 @@ class FHIRServer(object):
             headers = self.auth.signed_headers(headers)
         
         # perform the request but intercept 401 responses, raising our own Exception
+        stime = datetime.now()
         res = self.session.post(url, headers=headers, data=json.dumps(resource_json))
-        self.log_response(res)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
+        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time: {:.3f}'.format(
+            res.request.method,
+            res.request.url,
+            res.headers.get('X-Request-Id'),
+            res.headers.get('Status'),
+            float(res.headers.get('X-Runtime', float(res.headers.get('Server-Response-Time', '0.0')) / 1000)),
+            (datetime.now() - stime).total_seconds(),
+        ))
         self.raise_for_status(res)
         return res
     
@@ -260,8 +311,18 @@ class FHIRServer(object):
             'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
             'Accept': 'application/json',
         }
+        stime = datetime.now()
         res = self.session.post(url, data=formdata, auth=auth)
-        self.log_response(res)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
+        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time: {:.3f}'.format(
+            res.request.method,
+            res.request.url,
+            res.headers.get('X-Request-Id'),
+            res.headers.get('Status'),
+            float(res.headers.get('X-Runtime', float(res.headers.get('Server-Response-Time', '0.0')) / 1000)),
+            (datetime.now() - stime).total_seconds(),
+        ))
         self.raise_for_status(res)
         return res
     
@@ -282,8 +343,18 @@ class FHIRServer(object):
             headers = self.auth.signed_headers(headers)
         
         # perform the request but intercept 401 responses, raising our own Exception
+        stime = datetime.now()
         res = self.session.delete(url)
-        self.log_response(res)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
+        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time: {:.3f}'.format(
+            res.request.method,
+            res.request.url,
+            res.headers.get('X-Request-Id'),
+            res.headers.get('Status'),
+            float(res.headers.get('X-Runtime', float(res.headers.get('Server-Response-Time', '0.0')) / 1000)),
+            (datetime.now() - stime).total_seconds(),
+        ))
         self.raise_for_status(res)
         return res
     
@@ -299,19 +370,6 @@ class FHIRServer(object):
             raise FHIRNotFoundException(response)
         else:
             response.raise_for_status()
-    
-    def log_response(self, res):
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
-        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f}'.format(
-            res.request.method,
-            res.request.url,
-            res.headers.get('X-Request-Id'),
-            res.headers.get('Status'),
-            float(res.headers.get('X-Runtime', '0.0')),
-        ))
     
     # MARK: State Handling
     
