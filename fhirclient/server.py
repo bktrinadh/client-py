@@ -166,7 +166,7 @@ class FHIRServer(object):
         res = self._get(path, headers, nosign)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
-        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time: {:.3f}'.format(
+        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time={:.3f}'.format(
             res.request.method,
             res.request.url,
             res.headers.get('X-Request-Id'),
@@ -184,7 +184,7 @@ class FHIRServer(object):
         res = self._get(path, None, nosign)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
-        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time: {:.3f}'.format(
+        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time={:.3f}'.format(
             res.request.method,
             res.request.url,
             res.headers.get('X-Request-Id'),
@@ -214,7 +214,7 @@ class FHIRServer(object):
         res = self.session.get(url, headers=headers)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
-        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time: {:.3f}'.format(
+        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time={:.3f}'.format(
             res.request.method,
             res.request.url,
             res.headers.get('X-Request-Id'),
@@ -251,7 +251,7 @@ class FHIRServer(object):
         res = self.session.put(url, headers=headers, data=json.dumps(resource_json))
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
-        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time: {:.3f}'.format(
+        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time={:.3f}'.format(
             res.request.method,
             res.request.url,
             res.headers.get('X-Request-Id'),
@@ -288,7 +288,7 @@ class FHIRServer(object):
         res = self.session.post(url, headers=headers, data=json.dumps(resource_json))
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
-        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time: {:.3f}'.format(
+        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time={:.3f}'.format(
             res.request.method,
             res.request.url,
             res.headers.get('X-Request-Id'),
@@ -315,7 +315,7 @@ class FHIRServer(object):
         res = self.session.post(url, data=formdata, auth=auth)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
-        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time: {:.3f}'.format(
+        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time={:.3f}'.format(
             res.request.method,
             res.request.url,
             res.headers.get('X-Request-Id'),
@@ -347,7 +347,7 @@ class FHIRServer(object):
         res = self.session.delete(url)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
-        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time: {:.3f}'.format(
+        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time={:.3f}'.format(
             res.request.method,
             res.request.url,
             res.headers.get('X-Request-Id'),
