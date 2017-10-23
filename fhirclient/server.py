@@ -162,36 +162,14 @@ class FHIRServer(object):
         :returns: Decoded JSON response
         """
         headers = {'Accept': 'application/json'}
-        stime = datetime.now()
         res = self._get(path, headers, nosign)
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
-        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time={:.3f}'.format(
-            res.request.method,
-            res.request.url,
-            res.headers.get('X-Request-Id'),
-            res.headers.get('Status'),
-            float(res.headers.get('X-Runtime', float(res.headers.get('Server-Response-Time', '0.0')) / 1000)),
-            (datetime.now() - stime).total_seconds(),
-        ))
         return res.json()
     
     def request_data(self, path, headers={}, nosign=False):
         """ Perform a data request data against the server's base with the
         given relative path.
         """
-        stime = datetime.now()
         res = self._get(path, None, nosign)
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('SMART SERVER:{1}{0}'.format(dump.dump_response(res), LINE_SEP))
-        logger.info('method={} request_url={} x_request_id={} status={} response_time={:.3f} total_time={:.3f}'.format(
-            res.request.method,
-            res.request.url,
-            res.headers.get('X-Request-Id'),
-            res.headers.get('Status'),
-            float(res.headers.get('X-Runtime', float(res.headers.get('Server-Response-Time', '0.0')) / 1000)),
-            (datetime.now() - stime).total_seconds(),
-        ))
         return res.content
     
     def _get(self, path, headers={}, nosign=False):
